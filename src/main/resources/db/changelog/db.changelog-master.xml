@@ -5,4 +5,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
+        <include file="db/changelog/001-create-countries-table.xml"/>
+        <include file="db/changelog/002-insert-initial-countries.xml" relativeToChangelogFile="false"/>
+        <include file="db/changelog/003-create-cities-table.xml"/>
+        <include file="db/changelog/004-insert-tr-cities.xml" relativeToChangelogFile="false"/>
+        <include file="db/changelog/005-create-towns-table.xml" relativeToChangelogFile="false"/>
+        <include file="db/changelog/006-insert-major-towns.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

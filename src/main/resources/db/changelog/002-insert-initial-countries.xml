@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="20260304-2-insert-countries" author="omeralkan">
+        <insert tableName="countries">
+            <column name="name" value="Türkiye"/>
+            <column name="iso_code" value="TR"/>
+            <column name="phone_code" value="+90"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+        </insert>
+        <insert tableName="countries">
+            <column name="name" value="Azerbaycan"/>
+            <column name="iso_code" value="AZ"/>
+            <column name="phone_code" value="+994"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="created_by" value="system"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
