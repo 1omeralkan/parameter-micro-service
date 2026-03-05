@@ -1,7 +1,10 @@
 package com.omeralkan.parameter.controller;
 
+import com.omeralkan.parameter.dto.CityCreateDto;
 import com.omeralkan.parameter.dto.CityDto;
+import com.omeralkan.parameter.dto.CityUpdateDto;
 import com.omeralkan.parameter.service.CityService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,5 +33,24 @@ public class CityController {
     public ResponseEntity<CityDto> getCityByPlateCode(@PathVariable String plateCode) {
         CityDto city = cityService.getCityByPlateCode(plateCode);
         return ResponseEntity.ok(city);
+    }
+
+    @PostMapping
+    public ResponseEntity<CityDto> createCity(@Valid @RequestBody CityCreateDto createDto) {
+        CityDto savedCity = cityService.createCity(createDto);
+        return ResponseEntity.ok(savedCity);
+    }
+
+    // DELETE: http://localhost:8081/api/v1/cities/1
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCity(@PathVariable Long id) {
+        cityService.deleteCity(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CityDto> updateCity(@PathVariable Long id, @Valid @RequestBody CityUpdateDto updateDto) {
+        CityDto updatedCity = cityService.updateCity(id, updateDto);
+        return ResponseEntity.ok(updatedCity);
     }
 }

@@ -1,6 +1,9 @@
 package com.omeralkan.parameter.mapper;
 
+import com.omeralkan.parameter.dto.TownCreateDto;
 import com.omeralkan.parameter.dto.TownDto;
+import com.omeralkan.parameter.dto.TownUpdateDto;
+import com.omeralkan.parameter.entity.CityEntity;
 import com.omeralkan.parameter.entity.TownEntity;
 import org.springframework.stereotype.Component;
 
@@ -18,5 +21,24 @@ public class TownMapper {
                 // İlişkisel tablo: İlçenin bağlı olduğu Şehrin sadece ID'sini alıyoruz
                 entity.getCity() != null ? entity.getCity().getId() : null
         );
+    }
+
+    // Dışarıdan gelen DTO ve veritabanından bulduğumuz Şehir nesnesini birleştirip İlçe Entity'si yapar
+    public TownEntity toEntity(TownCreateDto createDto, CityEntity city) {
+        if (createDto == null) {
+            return null;
+        }
+        TownEntity entity = new TownEntity();
+        entity.setName(createDto.name());
+        entity.setCity(city); // Hiyerarşik bağ burada kuruluyor!
+        return entity;
+    }
+
+    public void updateEntityFromDto(TownUpdateDto dto, TownEntity entity, CityEntity city) {
+        if (dto == null || entity == null) {
+            return;
+        }
+        entity.setName(dto.name());
+        entity.setCity(city);
     }
 }
