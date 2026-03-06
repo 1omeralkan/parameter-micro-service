@@ -8,7 +8,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import java.sql.Types;
 import java.time.LocalDateTime;
 
-@MappedSuperclass // JPA'ya "Bu bir tablo değil, bu bir miras şablonudur" deriz.
+@MappedSuperclass
 @Getter
 @Setter
 public abstract class BaseEntity {
@@ -17,7 +17,7 @@ public abstract class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Version // Optimistic Locking'in Java'daki karşılığı. Çakışmaları engeller.
+    @Version
     private Long version;
 
     @JdbcTypeCode(Types.TINYINT)
@@ -36,7 +36,6 @@ public abstract class BaseEntity {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    // JPA Callback Metodları: Veri kaydedilmeden/güncellenmeden hemen önce otomatik çalışır.
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

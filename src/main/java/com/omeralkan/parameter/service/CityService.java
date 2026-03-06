@@ -7,15 +7,10 @@ import com.omeralkan.parameter.dto.CityUpdateDto;
 import java.util.List;
 
 public interface CityService {
-    // İş Kuralı 1: Belirli bir ülkenin aktif şehirlerini getir
     List<CityDto> getCitiesByCountryId(Long countryId);
-
-    // İş Kuralı 2: Plakaya göre aktif şehri bul
     CityDto getCityByPlateCode(String plateCode);
-
+    CityDto getCityById(Long id);
     CityDto createCity(CityCreateDto createDto);
-
     void deleteCity(Long id);
-
     CityDto updateCity(Long id, CityUpdateDto updateDto);
 }

@@ -4,6 +4,6 @@ public record CityDto(
         Long id,
         String name,
         String plateCode,
-        Long countryId // Sadece bağlandığı ülkenin ID'sini dönmek yeterlidir
+        Long countryId
 ) {
 }

@@ -15,6 +15,6 @@ public record CityCreateDto(
         String plateCode,
 
         @NotNull(message = "Şehrin bağlı olduğu ülke ID'si boş olamaz!")
-        Long countryId // İlişkiyi kuracak olan kritik anahtar!
+        Long countryId
 ) {
 }

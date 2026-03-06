@@ -52,18 +52,17 @@ public class CityServiceImpl implements CityService {
     public CityDto createCity(CityCreateDto createDto) {
         log.info("{} plakalı yeni şehir ekleniyor...", createDto.plateCode());
 
-        // İŞ KURALI 1: Gelen countryId veritabanında gerçekten var mı ve aktif mi?
+        //Gelen countryId veritabanında gerçekten var mı ve aktif mi?
         CountryEntity country = countryRepository.findById(createDto.countryId())
                 .filter(CountryEntity::getIsActive) // Sadece is_active = true olanı kabul et
                 .orElseThrow(() -> new RuntimeException("Bağlanmaya çalışılan ülke bulunamadı veya pasif! ID: " + createDto.countryId()));
 
-        // İŞ KURALI 2: Bu plaka koduna sahip aktif bir şehir zaten var mı?
+        //Bu plaka koduna sahip aktif bir şehir zaten var mı?
         Optional<CityEntity> existingCity = cityRepository.findByPlateCodeAndIsActiveTrue(createDto.plateCode());
         if (existingCity.isPresent()) {
             throw new RuntimeException("Bu plaka koduna sahip aktif bir şehir zaten var: " + createDto.plateCode());
         }
 
-        // Çevir ve Kaydet
         CityEntity newCity = cityMapper.toEntity(createDto, country);
         CityEntity savedCity = cityRepository.save(newCity);
 
@@ -99,7 +98,7 @@ public class CityServiceImpl implements CityService {
                 .filter(CountryEntity::getIsActive)
                 .orElseThrow(() -> new RuntimeException("Bağlanmaya çalışılan ülke bulunamadı veya pasif! ID: " + updateDto.countryId()));
 
-        // İŞ KURALI: Plaka değişiyorsa, yeni plaka başkasında var mı?
+        //Plaka değişiyorsa, yeni plaka başkasında var mı?
         if (!city.getPlateCode().equalsIgnoreCase(updateDto.plateCode())) {
             Optional<CityEntity> existing = cityRepository.findByPlateCodeAndIsActiveTrue(updateDto.plateCode());
             if (existing.isPresent()) {
@@ -111,5 +110,14 @@ public class CityServiceImpl implements CityService {
         CityEntity updatedCity = cityRepository.save(city);
 
         return cityMapper.toDto(updatedCity);
+    }
+
+    @Override
+    public CityDto getCityById(Long id) {
+        log.info("{} ID'li aktif şehir aranıyor...", id);
+        CityEntity city = cityRepository.findById(id)
+                .filter(CityEntity::getIsActive)
+                .orElseThrow(() -> new RuntimeException("Aktif şehir bulunamadı! ID: " + id));
+        return cityMapper.toDto(city);
     }
 }

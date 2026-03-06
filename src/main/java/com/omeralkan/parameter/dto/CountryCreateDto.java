@@ -3,7 +3,6 @@ package com.omeralkan.parameter.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-// Dışarıdan ülke eklenirken istenecek alanlar (ID yok!)
 public record CountryCreateDto(
 
         @NotBlank(message = "Ülke adı boş olamaz!")

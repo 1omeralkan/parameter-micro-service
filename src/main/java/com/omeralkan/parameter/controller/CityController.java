@@ -11,28 +11,29 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController // Spring'e bu sınıfın JSON dönen bir REST API olduğunu söylüyoruz
-@RequestMapping("/api/v1/cities") // Endpoint'imizin ana giriş kapısı
+@RestController
+@RequestMapping("/api/v1/cities")
 @RequiredArgsConstructor
 public class CityController {
 
-    // Dependency Inversion: Arayüze bağımlıyız, implementasyona değil! [cite: 2026-02-23]
     private final CityService cityService;
 
-    // GET: http://localhost:8081/api/v1/cities/country/1
-    // Amacı: Belirli bir ülkenin (Örn: ID'si 1 olan Türkiye'nin) şehirlerini getirmek
-    @GetMapping("/country/{countryId}")
-    public ResponseEntity<List<CityDto>> getCitiesByCountryId(@PathVariable Long countryId) {
-        List<CityDto> cities = cityService.getCitiesByCountryId(countryId);
-        return ResponseEntity.ok(cities);
+    // GET: http://localhost:8081/api/v1/cities/1
+    @GetMapping("/{id:[0-9]+}")
+    public ResponseEntity<CityDto> getCityById(@PathVariable Long id) {
+        return ResponseEntity.ok(cityService.getCityById(id));
     }
 
-    // GET: http://localhost:8081/api/v1/cities/plate/34
-    // Amacı: Plaka koduna göre nokta atışı şehir bulmak
+    // ÜLKE ID'SİNE GÖRE LİSTELE
+    @GetMapping("/country/{countryId}")
+    public ResponseEntity<List<CityDto>> getCitiesByCountryId(@PathVariable Long countryId) {
+        return ResponseEntity.ok(cityService.getCitiesByCountryId(countryId));
+    }
+
+    // PLAKA İLE GETİR
     @GetMapping("/plate/{plateCode}")
     public ResponseEntity<CityDto> getCityByPlateCode(@PathVariable String plateCode) {
-        CityDto city = cityService.getCityByPlateCode(plateCode);
-        return ResponseEntity.ok(city);
+        return ResponseEntity.ok(cityService.getCityByPlateCode(plateCode));
     }
 
     @PostMapping

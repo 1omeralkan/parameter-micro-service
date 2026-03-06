@@ -11,6 +11,6 @@ public record TownCreateDto(
         String name,
 
         @NotNull(message = "İlçenin bağlı olduğu şehir ID'si boş olamaz!")
-        Long cityId // İlişkiyi kuracak olan kritik anahtar!
+        Long cityId
 ) {
 }

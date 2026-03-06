@@ -18,11 +18,9 @@ public class CityMapper {
                 entity.getId(),
                 entity.getName(),
                 entity.getPlateCode(),
-                // İlişkisel tablo: Şehrin içindeki Ülke nesnesine gidip onun ID'sini alıyoruz
                 entity.getCountry() != null ? entity.getCountry().getId() : null
         );
     }
-    // Dışarıdan gelen DTO ve veritabanından bulduğumuz Ülke nesnesini birleştirip Şehir Entity'si yapar
     public CityEntity toEntity(CityCreateDto createDto, CountryEntity country) {
         if (createDto == null) {
             return null;
@@ -30,7 +28,7 @@ public class CityMapper {
         CityEntity entity = new CityEntity();
         entity.setName(createDto.name());
         entity.setPlateCode(createDto.plateCode());
-        entity.setCountry(country); // İşte hiyerarşik bağ burada kuruluyor!
+        entity.setCountry(country);
         return entity;
     }
 

@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController // Bu sınıfın bir REST API uç noktası olduğunu belirtiriz
-@RequestMapping("/api/v1/towns") // Tüm ilçe isteklerinin ana kapısı
-@RequiredArgsConstructor // Constructor injection ile bağımlılıkları güvenle alır
+@RestController
+@RequestMapping("/api/v1/towns")
+@RequiredArgsConstructor
 public class TownController {
 
     private final TownService townService;
@@ -23,7 +23,6 @@ public class TownController {
     public ResponseEntity<List<TownDto>> getTownsByCityId(@PathVariable Long cityId) {
         List<TownDto> towns = townService.getTownsByCityId(cityId);
 
-        // İşlem başarılıysa HTTP 200 (OK) statüsüyle veriyi dönüyoruz
         return ResponseEntity.ok(towns);
     }
 

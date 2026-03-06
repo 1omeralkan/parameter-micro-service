@@ -10,9 +10,8 @@ import java.util.Optional;
 @Repository
 public interface CountryRepository extends JpaRepository<CountryEntity, Long> {
 
-    // Kaan abinin "tetikte olun" kuralı: Silinmişleri (pasifleri) getirme!
+
     List<CountryEntity> findAllByIsActiveTrue();
 
-    // ISO koduna göre (Örn: TR) aktif ülkeyi bulma
     Optional<CountryEntity> findByIsoCodeAndIsActiveTrue(String isoCode);
 }

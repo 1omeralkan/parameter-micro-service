@@ -17,12 +17,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Slf4j // Loglama işlemleri için
+@Slf4j
 @Service
-@RequiredArgsConstructor // Constructor Injection (Bağımlılıkları içeri alma)
+@RequiredArgsConstructor
 public class TownServiceImpl implements TownService {
 
-    // Bağımlılıkların tersine çevrilmesi (Dependency Inversion) prensibine uyuyoruz
     private final TownRepository townRepository;
     private final TownMapper townMapper;
     private final CityRepository cityRepository;
@@ -31,10 +30,8 @@ public class TownServiceImpl implements TownService {
     public List<TownDto> getTownsByCityId(Long cityId) {
         log.info("{} ID'li şehre ait aktif ilçeler aranıyor...", cityId);
 
-        // Sadece aktif ilçeleri getiren, Kaan abinin "tetikte olun" kuralına uyan metod
         List<TownEntity> towns = townRepository.findAllByCityIdAndIsActiveTrue(cityId);
 
-        // Entity listesini DTO listesine dönüştürüyoruz (Java 8 Stream API gücü)
         return towns.stream()
                 .map(townMapper::toDto)
                 .collect(Collectors.toList());
@@ -44,7 +41,7 @@ public class TownServiceImpl implements TownService {
     public TownDto createTown(TownCreateDto createDto) {
         log.info("'{}' adında yeni ilçe ekleniyor...", createDto.name());
 
-        // İŞ KURALI: Gelen cityId veritabanında gerçekten var mı ve aktif mi?
+        // Gelen cityId veritabanında gerçekten var mı ve aktif mi?
         CityEntity city = cityRepository.findById(createDto.cityId())
                 .filter(CityEntity::getIsActive)
                 .orElseThrow(() -> new RuntimeException("Bağlanmaya çalışılan şehir bulunamadı veya pasif! ID: " + createDto.cityId()));
@@ -53,8 +50,6 @@ public class TownServiceImpl implements TownService {
         if (existingTown.isPresent()) {
             throw new RuntimeException("Bu şehirde '" + createDto.name() + "' adında aktif bir ilçe zaten var!");
         }
-
-        // Çevir ve Kaydet
         TownEntity newTown = townMapper.toEntity(createDto, city);
         TownEntity savedTown = townRepository.save(newTown);
 
@@ -90,7 +85,6 @@ public class TownServiceImpl implements TownService {
                 .filter(CityEntity::getIsActive)
                 .orElseThrow(() -> new RuntimeException("Bağlanmaya çalışılan şehir bulunamadı veya pasif! ID: " + updateDto.cityId()));
 
-        // İŞ KURALI: İlçe adı veya bağlı olduğu şehir değişiyorsa mükerrerlik kontrolü yap
         if (!town.getName().equalsIgnoreCase(updateDto.name()) || !town.getCity().getId().equals(updateDto.cityId())) {
             Optional<TownEntity> existing = townRepository.findByNameAndCityIdAndIsActiveTrue(updateDto.name(), updateDto.cityId());
             if (existing.isPresent()) {
