@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="008-insert-specific-error-messages" author="omeralkan">
+
+        <insert tableName="error_messages">
+            <column name="error_code" value="COUNTRY-404"/>
+            <column name="language" value="tr"/>
+            <column name="message" value="Aradığınız ülke sistemde bulunamadı."/>
+        </insert>
+        <insert tableName="error_messages">
+            <column name="error_code" value="COUNTRY-404"/>
+            <column name="language" value="en"/>
+            <column name="message" value="The requested country was not found in the system."/>
+        </insert>
+
+        <insert tableName="error_messages">
+            <column name="error_code" value="COUNTRY-409"/>
+            <column name="language" value="tr"/>
+            <column name="message" value="Bu isimde veya koda sahip bir ülke zaten kayıtlı."/>
+        </insert>
+        <insert tableName="error_messages">
+            <column name="error_code" value="COUNTRY-409"/>
+            <column name="language" value="en"/>
+            <column name="message" value="A country with this name or code is already registered."/>
+        </insert>
+
+        <insert tableName="error_messages">
+            <column name="error_code" value="CITY-404"/>
+            <column name="language" value="tr"/>
+            <column name="message" value="Aradığınız şehir sistemde bulunamadı."/>
+        </insert>
+        <insert tableName="error_messages">
+            <column name="error_code" value="CITY-404"/>
+            <column name="language" value="en"/>
+            <column name="message" value="The requested city was not found in the system."/>
+        </insert>
+
+        <insert tableName="error_messages">
+            <column name="error_code" value="TOWN-404"/>
+            <column name="language" value="tr"/>
+            <column name="message" value="Aradığınız ilçe sistemde bulunamadı."/>
+        </insert>
+        <insert tableName="error_messages">
+            <column name="error_code" value="TOWN-404"/>
+            <column name="language" value="en"/>
+            <column name="message" value="The requested town was not found in the system."/>
+        </insert>
+
+        <insert tableName="error_messages">
+            <column name="error_code" value="PARAM-400"/>
+            <column name="language" value="tr"/>
+            <column name="message" value="Gönderdiğiniz bilgiler eksik veya hatalı. Lütfen kontrol edip tekrar deneyiniz."/>
+        </insert>
+        <insert tableName="error_messages">
+            <column name="error_code" value="PARAM-400"/>
+            <column name="language" value="en"/>
+            <column name="message" value="The submitted data is incomplete or invalid. Please check and try again."/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>

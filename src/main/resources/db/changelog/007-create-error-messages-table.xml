@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="007-create-error-messages" author="omeralkan">
+        <createTable tableName="error_messages">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="error_code" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="language" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="version" type="BIGINT" defaultValueNumeric="0"/>
+            <column name="created_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" type="VARCHAR(50)" defaultValue="system"/>
+            <column name="updated_at" type="DATETIME"/>
+            <column name="updated_by" type="VARCHAR(50)"/>
+            <column name="is_active" type="TINYINT" defaultValueNumeric="1">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="error_messages" columnNames="error_code, language" constraintName="uq_error_code_language"/>
+    </changeSet>
+
+    <changeSet id="007-insert-error-messages" author="omeralkan">
+        <insert tableName="error_messages">
+            <column name="error_code" value="PARAM-404"/>
+            <column name="language" value="tr"/>
+            <column name="message" value="Aradığınız parametre (Ülke/Şehir/İlçe) bulunamadı veya silinmiş olabilir."/>
+        </insert>
+        <insert tableName="error_messages">
+            <column name="error_code" value="PARAM-404"/>
+            <column name="language" value="en"/>
+            <column name="message" value="The requested parameter (Country/City/Town) was not found or may have been deleted."/>
+        </insert>
+
+        <insert tableName="error_messages">
+            <column name="error_code" value="PARAM-500"/>
+            <column name="language" value="tr"/>
+            <column name="message" value="Parametre servisinde beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyiniz."/>
+        </insert>
+        <insert tableName="error_messages">
+            <column name="error_code" value="PARAM-500"/>
+            <column name="language" value="en"/>
+            <column name="message" value="An unexpected error occurred in the parameter service. Please try again later."/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

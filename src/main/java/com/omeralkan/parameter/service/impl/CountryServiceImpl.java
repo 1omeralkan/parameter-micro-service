@@ -4,6 +4,7 @@ import com.omeralkan.parameter.dto.CountryCreateDto;
 import com.omeralkan.parameter.dto.CountryDto;
 import com.omeralkan.parameter.dto.CountryUpdateDto;
 import com.omeralkan.parameter.entity.CountryEntity;
+import com.omeralkan.parameter.exception.BusinessException;
 import com.omeralkan.parameter.mapper.CountryMapper;
 import com.omeralkan.parameter.repository.CountryRepository;
 import com.omeralkan.parameter.service.CountryService;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,6 +23,11 @@ public class CountryServiceImpl implements CountryService {
     private final CountryRepository countryRepository;
     private final CountryMapper countryMapper;
 
+    // SONARQUBE: Tekrarlanan metinleri sabit değişkene aldık
+    private static final String COUNTRY_NOT_FOUND = "COUNTRY-404";
+    private static final String COUNTRY_ALREADY_EXISTS = "COUNTRY-409";
+    private static final String PARAM_BAD_REQUEST = "PARAM-400";
+
     @Override
     public List<CountryDto> getAllActiveCountries() {
         log.info("Sistemdeki tüm aktif ülkeler getiriliyor...");
@@ -31,7 +36,7 @@ public class CountryServiceImpl implements CountryService {
 
         return activeCountries.stream()
                 .map(countryMapper::toDto)
-                .collect(Collectors.toList());
+                .toList(); // SONARQUBE: Collectors yerine toList() kullanıldı
     }
 
     @Override
@@ -39,7 +44,7 @@ public class CountryServiceImpl implements CountryService {
         log.info("{} ISO kodlu aktif ülke aranıyor...", isoCode);
 
         CountryEntity country = countryRepository.findByIsoCodeAndIsActiveTrue(isoCode)
-                .orElseThrow(() -> new RuntimeException("Aktif ülke bulunamadı! ISO Kod: " + isoCode));
+                .orElseThrow(() -> new BusinessException(COUNTRY_NOT_FOUND));
 
         return countryMapper.toDto(country);
     }
@@ -48,19 +53,14 @@ public class CountryServiceImpl implements CountryService {
     public CountryDto createCountry(CountryCreateDto createDto) {
         log.info("{} ISO kodlu yeni ülke ekleniyor...", createDto.isoCode());
 
-        // Aynı ISO koduna sahip aktif bir ülke var mı kontrol et!
         Optional<CountryEntity> existingCountry = countryRepository.findByIsoCodeAndIsActiveTrue(createDto.isoCode());
         if (existingCountry.isPresent()) {
-            throw new RuntimeException("Bu ISO koduna sahip aktif bir ülke zaten var: " + createDto.isoCode());
+            throw new BusinessException(COUNTRY_ALREADY_EXISTS);
         }
 
-        // DTO'yu Entity'ye çevir
         CountryEntity newEntity = countryMapper.toEntity(createDto);
-
-        // Veritabanına kaydet
         CountryEntity savedEntity = countryRepository.save(newEntity);
 
-        // Kaydedilen Entity'i dış dünyaya dönmek için tekrar DTO'ya çevir
         return countryMapper.toDto(savedEntity);
     }
 
@@ -69,10 +69,11 @@ public class CountryServiceImpl implements CountryService {
         log.info("{} ID'li ülke pasife çekiliyor...", id);
 
         CountryEntity country = countryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Silinmek istenen ülke bulunamadı! ID: " + id));
+                .orElseThrow(() -> new BusinessException(COUNTRY_NOT_FOUND));
 
-        if (!country.getIsActive()) {
-            throw new RuntimeException("Bu ülke zaten pasif durumda! ID: " + id);
+        // SONARQUBE: NullPointerException riskine karşı güvenli boolean kontrolü
+        if (Boolean.FALSE.equals(country.getIsActive())) {
+            throw new BusinessException(PARAM_BAD_REQUEST);
         }
 
         country.setIsActive(false);
@@ -87,27 +88,27 @@ public class CountryServiceImpl implements CountryService {
 
         CountryEntity country = countryRepository.findById(id)
                 .filter(CountryEntity::getIsActive)
-                .orElseThrow(() -> new RuntimeException("Güncellenecek aktif ülke bulunamadı! ID: " + id));
+                .orElseThrow(() -> new BusinessException(COUNTRY_NOT_FOUND));
 
         if (!country.getIsoCode().equalsIgnoreCase(updateDto.isoCode())) {
             Optional<CountryEntity> existingWithNewCode = countryRepository.findByIsoCodeAndIsActiveTrue(updateDto.isoCode());
             if (existingWithNewCode.isPresent()) {
-                throw new RuntimeException("Bu ISO koduna sahip başka bir ülke zaten var: " + updateDto.isoCode());
+                throw new BusinessException(COUNTRY_ALREADY_EXISTS);
             }
         }
 
         countryMapper.updateEntityFromDto(updateDto, country);
-
         CountryEntity updatedCountry = countryRepository.save(country);
 
         return countryMapper.toDto(updatedCountry);
     }
+
     @Override
     public CountryDto getCountryById(Long id) {
         log.info("{} ID'li aktif ülke aranıyor...", id);
         CountryEntity country = countryRepository.findById(id)
                 .filter(CountryEntity::getIsActive)
-                .orElseThrow(() -> new RuntimeException("Aktif ülke bulunamadı! ID: " + id));
+                .orElseThrow(() -> new BusinessException(COUNTRY_NOT_FOUND));
         return countryMapper.toDto(country);
     }
 }

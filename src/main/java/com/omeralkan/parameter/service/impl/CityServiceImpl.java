@@ -5,6 +5,7 @@ import com.omeralkan.parameter.dto.CityDto;
 import com.omeralkan.parameter.dto.CityUpdateDto;
 import com.omeralkan.parameter.entity.CityEntity;
 import com.omeralkan.parameter.entity.CountryEntity;
+import com.omeralkan.parameter.exception.BusinessException;
 import com.omeralkan.parameter.mapper.CityMapper;
 import com.omeralkan.parameter.repository.CityRepository;
 import com.omeralkan.parameter.repository.CountryRepository;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,16 +26,21 @@ public class CityServiceImpl implements CityService {
     private final CityMapper cityMapper;
     private final CountryRepository countryRepository;
 
+    // SONARQUBE: Tekrarlanan metinleri sabit değişkene aldık
+    private static final String CITY_NOT_FOUND = "CITY-404";
+    private static final String COUNTRY_NOT_FOUND = "COUNTRY-404";
+    private static final String CITY_ALREADY_EXISTS = "CITY-409";
+    private static final String PARAM_BAD_REQUEST = "PARAM-400";
+
     @Override
     public List<CityDto> getCitiesByCountryId(Long countryId) {
         log.info("{} ID'li ülkeye ait aktif şehirler aranıyor...", countryId);
 
-        // Repository üzerinden o ülkeye ait şehirleri çekiyoruz
         List<CityEntity> cities = cityRepository.findAllByCountryIdAndIsActiveTrue(countryId);
 
         return cities.stream()
                 .map(cityMapper::toDto)
-                .collect(Collectors.toList());
+                .toList(); // SONARQUBE: Collectors yerine toList() kullanıldı
     }
 
     @Override
@@ -43,7 +48,7 @@ public class CityServiceImpl implements CityService {
         log.info("{} plakalı aktif şehir aranıyor...", plateCode);
 
         CityEntity city = cityRepository.findByPlateCodeAndIsActiveTrue(plateCode)
-                .orElseThrow(() -> new RuntimeException("Aktif şehir bulunamadı! Plaka: " + plateCode));
+                .orElseThrow(() -> new BusinessException(CITY_NOT_FOUND));
 
         return cityMapper.toDto(city);
     }
@@ -52,15 +57,13 @@ public class CityServiceImpl implements CityService {
     public CityDto createCity(CityCreateDto createDto) {
         log.info("{} plakalı yeni şehir ekleniyor...", createDto.plateCode());
 
-        //Gelen countryId veritabanında gerçekten var mı ve aktif mi?
         CountryEntity country = countryRepository.findById(createDto.countryId())
-                .filter(CountryEntity::getIsActive) // Sadece is_active = true olanı kabul et
-                .orElseThrow(() -> new RuntimeException("Bağlanmaya çalışılan ülke bulunamadı veya pasif! ID: " + createDto.countryId()));
+                .filter(CountryEntity::getIsActive)
+                .orElseThrow(() -> new BusinessException(COUNTRY_NOT_FOUND));
 
-        //Bu plaka koduna sahip aktif bir şehir zaten var mı?
         Optional<CityEntity> existingCity = cityRepository.findByPlateCodeAndIsActiveTrue(createDto.plateCode());
         if (existingCity.isPresent()) {
-            throw new RuntimeException("Bu plaka koduna sahip aktif bir şehir zaten var: " + createDto.plateCode());
+            throw new BusinessException(CITY_ALREADY_EXISTS);
         }
 
         CityEntity newCity = cityMapper.toEntity(createDto, country);
@@ -74,10 +77,11 @@ public class CityServiceImpl implements CityService {
         log.info("{} ID'li şehir pasife çekiliyor...", id);
 
         CityEntity city = cityRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Silinmek istenen şehir bulunamadı! ID: " + id));
+                .orElseThrow(() -> new BusinessException(CITY_NOT_FOUND));
 
-        if (!city.getIsActive()) {
-            throw new RuntimeException("Bu şehir zaten pasif durumda! ID: " + id);
+        // SONARQUBE: NullPointerException riskine karşı güvenli boolean kontrolü
+        if (Boolean.FALSE.equals(city.getIsActive())) {
+            throw new BusinessException(PARAM_BAD_REQUEST);
         }
 
         city.setIsActive(false);
@@ -92,17 +96,16 @@ public class CityServiceImpl implements CityService {
 
         CityEntity city = cityRepository.findById(id)
                 .filter(CityEntity::getIsActive)
-                .orElseThrow(() -> new RuntimeException("Güncellenecek aktif şehir bulunamadı! ID: " + id));
+                .orElseThrow(() -> new BusinessException(CITY_NOT_FOUND));
 
         CountryEntity country = countryRepository.findById(updateDto.countryId())
                 .filter(CountryEntity::getIsActive)
-                .orElseThrow(() -> new RuntimeException("Bağlanmaya çalışılan ülke bulunamadı veya pasif! ID: " + updateDto.countryId()));
+                .orElseThrow(() -> new BusinessException(COUNTRY_NOT_FOUND));
 
-        //Plaka değişiyorsa, yeni plaka başkasında var mı?
         if (!city.getPlateCode().equalsIgnoreCase(updateDto.plateCode())) {
             Optional<CityEntity> existing = cityRepository.findByPlateCodeAndIsActiveTrue(updateDto.plateCode());
             if (existing.isPresent()) {
-                throw new RuntimeException("Bu plaka koduna sahip başka bir şehir zaten var: " + updateDto.plateCode());
+                throw new BusinessException(CITY_ALREADY_EXISTS);
             }
         }
 
@@ -117,7 +120,7 @@ public class CityServiceImpl implements CityService {
         log.info("{} ID'li aktif şehir aranıyor...", id);
         CityEntity city = cityRepository.findById(id)
                 .filter(CityEntity::getIsActive)
-                .orElseThrow(() -> new RuntimeException("Aktif şehir bulunamadı! ID: " + id));
+                .orElseThrow(() -> new BusinessException(CITY_NOT_FOUND));
         return cityMapper.toDto(city);
     }
 }

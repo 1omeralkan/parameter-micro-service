@@ -5,6 +5,7 @@ import com.omeralkan.parameter.dto.TownDto;
 import com.omeralkan.parameter.dto.TownUpdateDto;
 import com.omeralkan.parameter.entity.CityEntity;
 import com.omeralkan.parameter.entity.TownEntity;
+import com.omeralkan.parameter.exception.BusinessException;
 import com.omeralkan.parameter.mapper.TownMapper;
 import com.omeralkan.parameter.repository.CityRepository;
 import com.omeralkan.parameter.repository.TownRepository;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,6 +26,12 @@ public class TownServiceImpl implements TownService {
     private final TownMapper townMapper;
     private final CityRepository cityRepository;
 
+    // SONARQUBE: Tekrarlanan metinleri sabit değişkene aldık
+    private static final String TOWN_NOT_FOUND = "TOWN-404";
+    private static final String CITY_NOT_FOUND = "CITY-404";
+    private static final String TOWN_ALREADY_EXISTS = "TOWN-409";
+    private static final String PARAM_BAD_REQUEST = "PARAM-400";
+
     @Override
     public List<TownDto> getTownsByCityId(Long cityId) {
         log.info("{} ID'li şehre ait aktif ilçeler aranıyor...", cityId);
@@ -34,22 +40,22 @@ public class TownServiceImpl implements TownService {
 
         return towns.stream()
                 .map(townMapper::toDto)
-                .collect(Collectors.toList());
+                .toList(); // SONARQUBE: Collectors yerine toList() kullanıldı
     }
 
     @Override
     public TownDto createTown(TownCreateDto createDto) {
         log.info("'{}' adında yeni ilçe ekleniyor...", createDto.name());
 
-        // Gelen cityId veritabanında gerçekten var mı ve aktif mi?
         CityEntity city = cityRepository.findById(createDto.cityId())
                 .filter(CityEntity::getIsActive)
-                .orElseThrow(() -> new RuntimeException("Bağlanmaya çalışılan şehir bulunamadı veya pasif! ID: " + createDto.cityId()));
+                .orElseThrow(() -> new BusinessException(CITY_NOT_FOUND));
 
         Optional<TownEntity> existingTown = townRepository.findByNameAndCityIdAndIsActiveTrue(createDto.name(), createDto.cityId());
         if (existingTown.isPresent()) {
-            throw new RuntimeException("Bu şehirde '" + createDto.name() + "' adında aktif bir ilçe zaten var!");
+            throw new BusinessException(TOWN_ALREADY_EXISTS);
         }
+
         TownEntity newTown = townMapper.toEntity(createDto, city);
         TownEntity savedTown = townRepository.save(newTown);
 
@@ -61,10 +67,11 @@ public class TownServiceImpl implements TownService {
         log.info("{} ID'li ilçe pasife çekiliyor...", id);
 
         TownEntity town = townRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Silinmek istenen ilçe bulunamadı! ID: " + id));
+                .orElseThrow(() -> new BusinessException(TOWN_NOT_FOUND));
 
-        if (!town.getIsActive()) {
-            throw new RuntimeException("Bu ilçe zaten pasif durumda! ID: " + id);
+        // SONARQUBE: NullPointerException riskine karşı güvenli boolean kontrolü
+        if (Boolean.FALSE.equals(town.getIsActive())) {
+            throw new BusinessException(PARAM_BAD_REQUEST);
         }
 
         town.setIsActive(false);
@@ -79,16 +86,16 @@ public class TownServiceImpl implements TownService {
 
         TownEntity town = townRepository.findById(id)
                 .filter(TownEntity::getIsActive)
-                .orElseThrow(() -> new RuntimeException("Güncellenecek aktif ilçe bulunamadı! ID: " + id));
+                .orElseThrow(() -> new BusinessException(TOWN_NOT_FOUND));
 
         CityEntity city = cityRepository.findById(updateDto.cityId())
                 .filter(CityEntity::getIsActive)
-                .orElseThrow(() -> new RuntimeException("Bağlanmaya çalışılan şehir bulunamadı veya pasif! ID: " + updateDto.cityId()));
+                .orElseThrow(() -> new BusinessException(CITY_NOT_FOUND));
 
         if (!town.getName().equalsIgnoreCase(updateDto.name()) || !town.getCity().getId().equals(updateDto.cityId())) {
             Optional<TownEntity> existing = townRepository.findByNameAndCityIdAndIsActiveTrue(updateDto.name(), updateDto.cityId());
             if (existing.isPresent()) {
-                throw new RuntimeException("Bu şehirde '" + updateDto.name() + "' adında aktif bir ilçe zaten var!");
+                throw new BusinessException(TOWN_ALREADY_EXISTS);
             }
         }
 
