@@ -23,7 +23,6 @@ public class CountryServiceImpl implements CountryService {
     private final CountryRepository countryRepository;
     private final CountryMapper countryMapper;
 
-    // SONARQUBE: Tekrarlanan metinleri sabit değişkene aldık
     private static final String COUNTRY_NOT_FOUND = "COUNTRY-404";
     private static final String COUNTRY_ALREADY_EXISTS = "COUNTRY-409";
     private static final String PARAM_BAD_REQUEST = "PARAM-400";
@@ -36,7 +35,7 @@ public class CountryServiceImpl implements CountryService {
 
         return activeCountries.stream()
                 .map(countryMapper::toDto)
-                .toList(); // SONARQUBE: Collectors yerine toList() kullanıldı
+                .toList();
     }
 
     @Override
@@ -71,7 +70,6 @@ public class CountryServiceImpl implements CountryService {
         CountryEntity country = countryRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(COUNTRY_NOT_FOUND));
 
-        // SONARQUBE: NullPointerException riskine karşı güvenli boolean kontrolü
         if (Boolean.FALSE.equals(country.getIsActive())) {
             throw new BusinessException(PARAM_BAD_REQUEST);
         }

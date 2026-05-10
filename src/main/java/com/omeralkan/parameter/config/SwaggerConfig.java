@@ -14,7 +14,7 @@ public class SwaggerConfig {
         return (operation, handlerMethod) -> {
             Parameter acceptLanguage = new Parameter()
                     .in("header")
-                    .schema(new StringSchema()._default("tr")) // Varsayılan olarak 'tr' dolu gelsin
+                    .schema(new StringSchema()._default("tr"))
                     .name("Accept-Language")
                     .description("Dil Seçeneği (İngilizce için 'en', Türkçe için boş bırakın veya 'tr' yazın)")
                     .required(false);

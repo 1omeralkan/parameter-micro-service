@@ -18,19 +18,16 @@ public class CityController {
 
     private final CityService cityService;
 
-    // GET: http://localhost:8081/api/v1/cities/1
     @GetMapping("/{id:[0-9]+}")
     public ResponseEntity<CityDto> getCityById(@PathVariable Long id) {
         return ResponseEntity.ok(cityService.getCityById(id));
     }
 
-    // ÜLKE ID'SİNE GÖRE LİSTELE
     @GetMapping("/country/{countryId}")
     public ResponseEntity<List<CityDto>> getCitiesByCountryId(@PathVariable Long countryId) {
         return ResponseEntity.ok(cityService.getCitiesByCountryId(countryId));
     }
 
-    // PLAKA İLE GETİR
     @GetMapping("/plate/{plateCode}")
     public ResponseEntity<CityDto> getCityByPlateCode(@PathVariable String plateCode) {
         return ResponseEntity.ok(cityService.getCityByPlateCode(plateCode));
@@ -42,7 +39,6 @@ public class CityController {
         return ResponseEntity.ok(savedCity);
     }
 
-    // DELETE: http://localhost:8081/api/v1/cities/1
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCity(@PathVariable Long id) {
         cityService.deleteCity(id);

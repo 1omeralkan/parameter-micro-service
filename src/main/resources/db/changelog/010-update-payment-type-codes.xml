@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="010-1" author="omeralkan">
+        <update tableName="payment_types">
+            <column name="code" value="P"/>
+            <where>code = 'PESIN'</where>
+        </update>
+        <update tableName="payment_types">
+            <column name="code" value="T"/>
+            <where>code = 'TAKSITLI'</where>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>

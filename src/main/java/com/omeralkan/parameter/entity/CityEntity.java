@@ -23,12 +23,10 @@ public class CityEntity extends BaseEntity {
     @Column(name = "plate_code", length = 5)
     private String plateCode;
 
-    // Çoğuldan Tekile (Birçok şehir bir ülkeye aittir)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id", nullable = false)
     private CountryEntity country;
 
-    // Bir şehrin birden fazla ilçesi olur
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<TownEntity> towns = new ArrayList<>();
 }

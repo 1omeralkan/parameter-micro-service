@@ -17,7 +17,6 @@ public class TownEntity extends BaseEntity {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    // Birçok ilçe bir şehre aittir
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id", nullable = false)
     private CityEntity city;

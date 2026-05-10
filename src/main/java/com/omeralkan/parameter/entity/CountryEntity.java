@@ -26,7 +26,6 @@ public class CountryEntity extends BaseEntity {
     @Column(name = "phone_code", nullable = false, length = 10)
     private String phoneCode;
 
-    // Bir ülkenin birden fazla şehri olur (One-To-Many)
     @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CityEntity> cities = new ArrayList<>();
 }

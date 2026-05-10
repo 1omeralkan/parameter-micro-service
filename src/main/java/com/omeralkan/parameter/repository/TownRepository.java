@@ -10,7 +10,6 @@ import java.util.Optional;
 @Repository
 public interface TownRepository extends JpaRepository<TownEntity, Long> {
 
-    // SADECE BELİRLİ BİR ŞEHRE AİT aktif ilçeleri getir (Örn: Sadece İstanbul'un ilçeleri)
     List<TownEntity> findAllByCityIdAndIsActiveTrue(Long cityId);
 
     Optional<TownEntity> findByNameAndCityIdAndIsActiveTrue(String name, Long cityId);

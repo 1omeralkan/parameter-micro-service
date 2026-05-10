@@ -26,7 +26,6 @@ public class TownServiceImpl implements TownService {
     private final TownMapper townMapper;
     private final CityRepository cityRepository;
 
-    // SONARQUBE: Tekrarlanan metinleri sabit değişkene aldık
     private static final String TOWN_NOT_FOUND = "TOWN-404";
     private static final String CITY_NOT_FOUND = "CITY-404";
     private static final String TOWN_ALREADY_EXISTS = "TOWN-409";
@@ -40,7 +39,7 @@ public class TownServiceImpl implements TownService {
 
         return towns.stream()
                 .map(townMapper::toDto)
-                .toList(); // SONARQUBE: Collectors yerine toList() kullanıldı
+                .toList();
     }
 
     @Override
@@ -69,7 +68,6 @@ public class TownServiceImpl implements TownService {
         TownEntity town = townRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(TOWN_NOT_FOUND));
 
-        // SONARQUBE: NullPointerException riskine karşı güvenli boolean kontrolü
         if (Boolean.FALSE.equals(town.getIsActive())) {
             throw new BusinessException(PARAM_BAD_REQUEST);
         }

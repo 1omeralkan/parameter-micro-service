@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 
-@RestControllerAdvice // Spring Boot'a "Tüm Controller'ların koruması budur" diyoruz
+@RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
@@ -30,7 +30,6 @@ public class GlobalExceptionHandler {
 
         String errorMessage = errorMessageRepository.findByErrorCodeAndLanguage(ex.getErrorCode(), language)
                 .map(ErrorMessageEntity::getMessage)
-                // Veritabanında o kodu bulamazsak patlamasın diye yedek mesajımız:
                 .orElse("Bilinmeyen bir hata oluştu / Unknown error occurred");
 
         ErrorResponse errorResponse = new ErrorResponse(

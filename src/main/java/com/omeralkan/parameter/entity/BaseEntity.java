@@ -39,7 +39,7 @@ public abstract class BaseEntity {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
-        this.createdBy = "system"; // İleride buraya login olan kullanıcının ID'si gelecek.
+        this.createdBy = "system";
     }
 
     @PreUpdate
