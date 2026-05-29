@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="012-1" author="omeralkan">
+        <insert tableName="coverage_parameters">
+            <column name="coverage_code" value="V"/>
+            <column name="multiplier" valueNumeric="100.00"/>
+            <column name="description" value="Vefat Teminatı Çarpanı"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="version" valueNumeric="0"/>
+        </insert>
+        <insert tableName="coverage_parameters">
+            <column name="coverage_code" value="M"/>
+            <column name="multiplier" valueNumeric="50.00"/>
+            <column name="description" value="Sürekli Sakatlık Çarpanı"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="version" valueNumeric="0"/>
+        </insert>
+        <insert tableName="coverage_parameters">
+            <column name="coverage_code" value="K"/>
+            <column name="multiplier" valueNumeric="80.00"/>
+            <column name="description" value="Kritik Hastalık Çarpanı"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="version" valueNumeric="0"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

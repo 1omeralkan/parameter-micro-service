@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/v1/countries")
@@ -16,6 +18,11 @@ import org.springframework.web.bind.annotation.*;
 public class CountryController {
 
     private final CountryService countryService;
+
+    @GetMapping
+    public ResponseEntity<List<CountryDto>> getAllCountries() {
+        return ResponseEntity.ok(countryService.getAllActiveCountries());
+    }
 
     @GetMapping("/{id:[0-9]+}")
     public ResponseEntity<CountryDto> getCountryById(@PathVariable Long id) {

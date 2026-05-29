@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="015-1" author="omeralkan">
+        <delete tableName="risk_parameters"/>
+
+        <insert tableName="risk_parameters">
+            <column name="param_key" value="HEALTH_REPORT_THRESHOLD"/>
+            <column name="param_value" valueNumeric="1.40"/>
+            <column name="description" value="Sağlık raporu istenmesi için geçilmesi gereken risk eşiği"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="risk_parameters">
+            <column name="param_key" value="BMI_MIN_LIMIT"/>
+            <column name="param_value" valueNumeric="18.50"/>
+            <column name="description" value="Zayıflık (Düşük VKI) sınırı"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="risk_parameters">
+            <column name="param_key" value="BMI_OBESE_LIMIT"/>
+            <column name="param_value" valueNumeric="30.00"/>
+            <column name="description" value="Obezite (Yüksek VKI) sınırı"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="risk_parameters">
+            <column name="param_key" value="BMI_OVERWEIGHT_LIMIT"/>
+            <column name="param_value" valueNumeric="25.00"/>
+            <column name="description" value="Fazla kilo (Orta risk VKI) sınırı"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="risk_parameters">
+            <column name="param_key" value="BMI_HIGH_RISK_PENALTY"/>
+            <column name="param_value" valueNumeric="0.50"/>
+            <column name="description" value="Obezite veya aşırı zayıflık durumunda eklenecek çarpan cezası"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="risk_parameters">
+            <column name="param_key" value="BMI_MEDIUM_RISK_PENALTY"/>
+            <column name="param_value" valueNumeric="0.20"/>
+            <column name="description" value="Fazla kilolu durumunda eklenecek çarpan cezası"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="risk_parameters">
+            <column name="param_key" value="MAX_AGE_LIMIT"/>
+            <column name="param_value" valueNumeric="50.00"/>
+            <column name="description" value="Riskli kabul edilen yaş sınırı"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="risk_parameters">
+            <column name="param_key" value="AGE_PENALTY"/>
+            <column name="param_value" valueNumeric="0.30"/>
+            <column name="description" value="Yaş sınırı aşılırsa uygulanacak ceza çarpanı"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="risk_parameters">
+            <column name="param_key" value="MALE_GENDER_PENALTY"/>
+            <column name="param_value" valueNumeric="0.10"/>
+            <column name="description" value="Erkek müşteriler için uygulanacak risk çarpanı"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

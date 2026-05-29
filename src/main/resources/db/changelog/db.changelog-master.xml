@@ -15,4 +15,9 @@
         <include file="db/changelog/008-insert-specific-error-messages.xml"/>
         <include file="db/changelog/009-create-payment-types-table.xml"/>
         <include file="db/changelog/010-update-payment-type-codes.xml"/>
+        <include file="db/changelog/011-create-coverage-parameters-table.xml"/>
+        <include file="db/changelog/012-insert-coverage-parameters.xml"/>
+        <include file="db/changelog/013-create-risk-parameters-table.xml"/>
+        <include file="db/changelog/014-insert-risk-parameters.xml"/>
+        <include file="db/changelog/015-fix-risk-parameters.xml"/>
 </databaseChangeLog>
